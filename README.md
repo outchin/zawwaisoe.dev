@@ -47,7 +47,7 @@ src/
 prisma/
   schema.prisma           Post model
 public/
-  resume.pdf             Placeholder — replace with your real resume PDF
+  zawwaisoe-resume.pdf   Resume served by the download button
 ```
 
 ## Getting started
@@ -72,9 +72,10 @@ Open http://localhost:3000.
    Add a `image: "/projects/your-shot.png"` field (drop the file in
    `public/projects/`) to show a screenshot; omit it and the card shows an
    "add a screenshot" placeholder instead.
-3. **`public/resume.pdf`** — replace the placeholder file with your actual
-   resume. Keep the filename `resume.pdf`, or update `resumeUrl` in
-   `site.ts` if you rename it.
+3. **`public/zawwaisoe-resume.pdf`** — the resume behind the download
+   button. Overwrite it to update, or update `resumeUrl` in `site.ts` if
+   you rename it. It's public, so leave out your phone number and street
+   address.
 4. **Profile photo** — drop a square photo in `public/` (e.g. `avatar.jpg`)
    and set `avatarUrl: "/avatar.jpg"` in `site.ts`. Until then the nav shows
    your initials in a circle instead.

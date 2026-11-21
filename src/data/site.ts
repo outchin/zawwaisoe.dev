@@ -17,8 +17,8 @@ export const site = {
   avatarUrl: "/avatar.jpg",
   avatarInitials: "ZW",
 
-  // Used by the resume download button. Drop your PDF at public/resume.pdf.
-  resumeUrl: "/resume.pdf",
+  // Used by the resume download button. PDF lives at public/zawwaisoe-resume.pdf.
+  resumeUrl: "/zawwaisoe-resume.pdf",
   resumeFileName: "Zaw-Wai-Soe-Resume.pdf",
 
   email: "mgzawwai.soe224@gmail.com",
