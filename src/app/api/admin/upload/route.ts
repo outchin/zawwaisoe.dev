@@ -15,8 +15,13 @@ function safeExt(filename: string, mimeType: string) {
 
 // Uploads always land on local disk under public/uploads/, so the admin
 // panel works fully offline in local dev without needing Vercel Blob
-// credentials. If BLOB_READ_WRITE_TOKEN is set (e.g. in production), prefer
-// Vercel Blob instead so uploads survive read-only/serverless filesystems.
+// credentials. When Blob credentials are present, prefer Vercel Blob instead
+// so uploads survive read-only/serverless filesystems. Newer Vercel Blob
+// stores only set BLOB_STORE_ID and authenticate via the deployment's OIDC
+// token; older ones set BLOB_READ_WRITE_TOKEN. @vercel/blob handles both.
+const hasBlobCredentials = Boolean(
+  process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID,
+);
 export async function POST(request: Request) {
   const form = await request.formData().catch(() => null);
   const file = form?.get("file");
@@ -31,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Image is larger than 8MB" }, { status: 400 });
   }
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  if (hasBlobCredentials) {
     const { put } = await import("@vercel/blob");
     const blob = await put(file.name, file, {
       access: "public",
