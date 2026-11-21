@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>Market Price Pro — backend architecture</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#59636e"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3b82f6"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #d0d7de; stroke-width: 2; }
+      .box-accent { fill: #eff6ff; stroke: #3b82f6; stroke-width: 2; }
+      .h { font-size: 24px; font-weight: 700; fill: #1f2328; }
+      .t { font-size: 17px; fill: #59636e; }
+      .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+      .lbl { font-size: 15px; fill: #59636e; }
+      .line { stroke: #59636e; stroke-width: 2; fill: none; }
+      .line-accent { stroke: #3b82f6; stroke-width: 2.5; fill: none; }
+      .dash { stroke-dasharray: 7 6; }
+      .col { font-size: 14px; font-weight: 700; letter-spacing: 2px; fill: #59636e; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="60" y="72" font-size="34" font-weight="700" fill="#1f2328">Market Price Pro <tspan fill="#3b82f6">— backend architecture</tspan></text>
+  <text x="60" y="108" class="t">One NestJS API serving the iOS app, the Android app and the web admin panel</text>
+
+  <!-- Column labels -->
+  <text x="60" y="160" class="col">CLIENTS</text>
+  <text x="1160" y="160" class="col">DATA</text>
+
+  <!-- Clients -->
+  <rect x="60" y="190" width="280" height="96" rx="12" class="box"/>
+  <text x="84" y="230" class="h">iOS app</text>
+  <text x="84" y="260" class="t">App Store</text>
+
+  <rect x="60" y="310" width="280" height="96" rx="12" class="box"/>
+  <text x="84" y="350" class="h">Android app</text>
+  <text x="84" y="380" class="t">APK distribution</text>
+
+  <rect x="60" y="430" width="280" height="96" rx="12" class="box"/>
+  <text x="84" y="470" class="h">Web admin panel</text>
+  <text x="84" y="500" class="t">Admins enter &amp; manage prices</text>
+
+  <!-- Firebase -->
+  <rect x="60" y="620" width="280" height="96" rx="12" class="box"/>
+  <text x="84" y="660" class="h">Firebase Cloud</text>
+  <text x="84" y="688" class="h">Messaging</text>
+
+  <!-- Push: Firebase -> iOS / Android -->
+  <path d="M60 668 H34 V238 H58" class="line dash" marker-end="url(#arrow)"/>
+  <path d="M34 358 H58" class="line dash" marker-end="url(#arrow)"/>
+  <text x="26" y="560" class="lbl" transform="rotate(-90 26 560)">push notifications</text>
+
+  <!-- EKS cluster -->
+  <rect x="420" y="170" width="620" height="470" rx="18" fill="#f6f8fa" stroke="#3b82f6" stroke-width="2" class="dash"/>
+  <rect x="440" y="150" width="236" height="36" rx="18" fill="#3b82f6"/>
+  <text x="458" y="174" font-size="16" font-weight="700" fill="#ffffff">AWS · Amazon EKS</text>
+
+  <!-- API replicas -->
+  <rect x="504" y="264" width="520" height="190" rx="14" class="box" opacity="0.5"/>
+  <rect x="492" y="252" width="520" height="190" rx="14" class="box" opacity="0.75"/>
+  <rect x="480" y="240" width="520" height="190" rx="14" class="box-accent"/>
+  <text x="506" y="282" font-size="28" font-weight="700" fill="#1f2328">NestJS API</text>
+  <text x="506" y="316" class="t">REST APIs · separate admin &amp; user auth</text>
+  <text x="506" y="344" class="t">Prices · charts · pagination · time zones</text>
+  <text x="506" y="372" class="t">Ads (popup / banner) · notification triggers</text>
+  <rect x="506" y="390" width="262" height="28" rx="14" fill="#ffffff" stroke="#3b82f6"/>
+  <text x="522" y="410" font-size="14" fill="#2563eb" font-weight="600">replicas scale for peak traffic</text>
+
+  <!-- Cron -->
+  <rect x="480" y="500" width="520" height="104" rx="14" class="box"/>
+  <text x="506" y="540" class="h">Scheduled job <tspan class="mono" font-size="18" font-weight="400" fill="#59636e">(cron)</tspan></text>
+  <text x="506" y="572" class="t">Publishes a daily snapshot of latest prices</text>
+  <text x="506" y="594" class="t">so price history is preserved for charts</text>
+
+  <!-- Clients -> API -->
+  <path d="M340 238 L478 292" class="line-accent" marker-end="url(#arrow-accent)"/>
+  <path d="M340 358 L478 340" class="line-accent" marker-end="url(#arrow-accent)"/>
+  <path d="M340 478 L478 392" class="line-accent" marker-end="url(#arrow-accent)"/>
+  <text x="352" y="414" class="lbl mono">HTTPS</text>
+
+  <!-- API -> Firebase -->
+  <path d="M540 430 V470 H450 V668 H342" class="line" marker-end="url(#arrow)"/>
+
+  <!-- Redis -->
+  <rect x="1160" y="190" width="380" height="140" rx="14" class="box"/>
+  <text x="1186" y="232" class="h">Redis</text>
+  <text x="1186" y="264" class="t">Cache for hot price endpoints —</text>
+  <text x="1186" y="290" class="t">absorbs bursts when rates are</text>
+  <text x="1186" y="316" class="t">announced and users arrive at once</text>
+
+  <!-- MySQL -->
+  <rect x="1160" y="370" width="380" height="190" rx="14" class="box"/>
+  <text x="1186" y="412" class="h">MySQL</text>
+  <text x="1186" y="444" class="t">Currencies · gold · fuel · cars · phones</text>
+  <text x="1186" y="472" class="t">Price history for charts &amp; graphs</text>
+  <text x="1186" y="500" class="t">Myanmar · Thailand · Laos ·</text>
+  <text x="1186" y="526" class="t">Vietnam · Singapore time zones</text>
+
+  <!-- API / cron -> data -->
+  <path d="M1000 286 L1158 262" class="line" marker-end="url(#arrow)"/>
+  <text x="1100" y="256" class="lbl mono" text-anchor="middle">cache-first</text>
+  <path d="M1000 400 L1158 440" class="line" marker-end="url(#arrow)"/>
+  <text x="1100" y="402" class="lbl mono" text-anchor="middle">read / write</text>
+  <path d="M1000 552 L1158 520" class="line" marker-end="url(#arrow)"/>
+  <text x="1100" y="562" class="lbl mono" text-anchor="middle">snapshot</text>
+
+  <!-- Stats -->
+  <rect x="1160" y="620" width="380" height="96" rx="14" fill="#1f2328"/>
+  <text x="1186" y="660" font-size="22" font-weight="700" fill="#ffffff">Millions of API requests / day</text>
+  <text x="1186" y="692" font-size="17" fill="#d0d7de">22K+ community on Facebook</text>
+
+  <!-- Footer -->
+  <text x="60" y="840" class="t">Sole backend developer · API contracts shared with iOS, Android and web developers</text>
+  <text x="1540" y="840" class="t mono" text-anchor="end">zawwaisoe.dev</text>
+</svg>
