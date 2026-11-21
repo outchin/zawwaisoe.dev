@@ -59,16 +59,14 @@
   <rect x="440" y="150" width="236" height="36" rx="18" fill="#3b82f6"/>
   <text x="458" y="174" font-size="16" font-weight="700" fill="#ffffff">AWS · Amazon EKS</text>
 
-  <!-- API replicas -->
-  <rect x="504" y="264" width="520" height="190" rx="14" class="box" opacity="0.5"/>
-  <rect x="492" y="252" width="520" height="190" rx="14" class="box" opacity="0.75"/>
+  <!-- API -->
   <rect x="480" y="240" width="520" height="190" rx="14" class="box-accent"/>
   <text x="506" y="282" font-size="28" font-weight="700" fill="#1f2328">NestJS API</text>
-  <text x="506" y="316" class="t">REST APIs · separate admin &amp; user auth</text>
+  <text x="506" y="316" class="t">REST APIs for mobile apps &amp; admin panel</text>
   <text x="506" y="344" class="t">Prices · charts · pagination · time zones</text>
   <text x="506" y="372" class="t">Ads (popup / banner) · notification triggers</text>
-  <rect x="506" y="390" width="262" height="28" rx="14" fill="#ffffff" stroke="#3b82f6"/>
-  <text x="522" y="410" font-size="14" fill="#2563eb" font-weight="600">replicas scale for peak traffic</text>
+  <rect x="506" y="390" width="300" height="28" rx="14" fill="#ffffff" stroke="#3b82f6"/>
+  <text x="522" y="410" font-size="14" fill="#2563eb" font-weight="600">separate auth &amp; roles: admin / user</text>
 
   <!-- Cron -->
   <rect x="480" y="500" width="520" height="104" rx="14" class="box"/>
