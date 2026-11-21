@@ -21,7 +21,7 @@ export const site = {
   resumeUrl: "/zawwaisoe-resume.pdf",
   resumeFileName: "Zaw-Wai-Soe-Resume.pdf",
 
-  email: "mgzawwai.soe224@gmail.com",
+  email: "zawwaisoe.job@gmail.com",
 
   social: [
     { label: "GitHub", href: "https://github.com/zawwaisoe" },
