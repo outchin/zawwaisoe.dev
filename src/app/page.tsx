@@ -2,6 +2,7 @@ import { ProjectBar } from "@/components/ProjectBar";
 import { Hero } from "@/components/Hero";
 import { Skills } from "@/components/Skills";
 import { Projects } from "@/components/Projects";
+import { Labs } from "@/components/Labs";
 import { Contact } from "@/components/Contact";
 
 // <Projects> reads from the database. Render per request so the build
@@ -16,6 +17,7 @@ export default function Home() {
         <Hero />
         <Skills />
         <Projects />
+        <Labs />
         <Contact />
       </main>
     </>

@@ -4,6 +4,8 @@ import { site } from "@/data/site";
 
 const links = [
   { href: "/#projects", label: "projects" },
+  // another app behind a rewrite (next.config.ts): plain <a>, not <Link>
+  { href: "/labs", label: "labs", external: true },
   { href: "/#skills", label: "skills" },
   { href: "/blog", label: "blog" },
   { href: "/#contact", label: "contact" },
@@ -21,9 +23,15 @@ export function ProjectBar() {
         <ul className="hidden items-center gap-6 text-muted sm:flex">
           {links.map((link) => (
             <li key={link.href}>
-              <Link href={link.href} className="hover:text-foreground">
-                {link.label}
-              </Link>
+              {"external" in link ? (
+                <a href={link.href} className="hover:text-foreground">
+                  {link.label}
+                </a>
+              ) : (
+                <Link href={link.href} className="hover:text-foreground">
+                  {link.label}
+                </Link>
+              )}
             </li>
           ))}
         </ul>
