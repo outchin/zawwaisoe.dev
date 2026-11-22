@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { findSection, topicLabel } from "@/lib/blog-taxonomy";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,9 @@ export default async function AdminDashboard() {
       title: true,
       published: true,
       updatedAt: true,
+      category: true,
+      topic: true,
+      tags: true,
     },
   });
 
@@ -44,7 +48,9 @@ export default async function AdminDashboard() {
               <div>
                 <p className="font-medium text-foreground">{post.title}</p>
                 <p className="font-sans text-xs text-muted">
-                  {post.published ? "published" : "draft"} · updated{" "}
+                  {post.published ? "published" : "draft"} · {findSection(post.category)?.label ?? post.category}
+                  {post.topic ? ` › ${topicLabel(post.topic)}` : " › (no topic)"}
+                  {post.tags.length > 0 && ` · ${post.tags.map((t) => `#${t}`).join(" ")}`} · updated{" "}
                   {post.updatedAt.toLocaleDateString()}
                 </p>
               </div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import { parseTaxonomy } from "@/lib/blog-taxonomy";
 
 export async function GET() {
   const posts = await prisma.post.findMany({
@@ -11,6 +12,9 @@ export async function GET() {
       title: true,
       excerpt: true,
       coverImage: true,
+      category: true,
+      topic: true,
+      tags: true,
       published: true,
       publishedAt: true,
       createdAt: true,
@@ -40,6 +44,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Title is required" }, { status: 400 });
   }
 
+  const taxonomy = parseTaxonomy(body);
+  if ("error" in taxonomy) {
+    return NextResponse.json({ error: taxonomy.error }, { status: 400 });
+  }
+
   const published = Boolean(body?.published);
   const slug = await uniqueSlug(body?.slug?.trim() || title);
 
@@ -50,6 +59,9 @@ export async function POST(request: Request) {
       excerpt: body?.excerpt?.trim() || null,
       content,
       coverImage: body?.coverImage?.trim() || null,
+      category: taxonomy.category,
+      topic: taxonomy.topic,
+      tags: taxonomy.tags,
       published,
       publishedAt: published ? new Date() : null,
     },

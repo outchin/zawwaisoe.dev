@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { slugify } from "@/lib/slug";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { DEFAULT_SECTION, MAX_TAGS, SECTIONS, findSection, normalizeTags, tagSlug } from "@/lib/blog-taxonomy";
 
 type Post = {
   id: string;
@@ -15,15 +16,23 @@ type Post = {
   excerpt: string | null;
   content: string;
   coverImage: string | null;
+  category: string;
+  topic: string | null;
+  tags: string[];
   published: boolean;
 };
+
+/** tags already used on other posts, by topic slug ("" = no topic): offered as one-click suggestions */
+export type TagsByTopic = Record<string, string[]>;
 
 export function PostEditor({
   mode,
   post,
+  tagsByTopic = {},
 }: {
   mode: "create" | "edit";
   post?: Post;
+  tagsByTopic?: TagsByTopic;
 }) {
   const router = useRouter();
   const [title, setTitle] = useState(post?.title ?? "");
@@ -32,6 +41,9 @@ export function PostEditor({
   const [excerpt, setExcerpt] = useState(post?.excerpt ?? "");
   const [content, setContent] = useState(post?.content ?? "");
   const [coverImage, setCoverImage] = useState(post?.coverImage ?? "");
+  const [category, setCategory] = useState(post?.category ?? DEFAULT_SECTION);
+  const [topic, setTopic] = useState(post?.topic ?? "");
+  const [tagsText, setTagsText] = useState((post?.tags ?? []).join(", "));
   const [published, setPublished] = useState(post?.published ?? false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -41,6 +53,21 @@ export function PostEditor({
   function handleTitleChange(value: string) {
     setTitle(value);
     if (!slugTouched) setSlug(slugify(value));
+  }
+
+  const section = findSection(category);
+  const currentTags = normalizeTags(tagsText);
+  const currentTagSlugs = new Set(currentTags.map(tagSlug));
+  const suggestions = (tagsByTopic[topic] ?? []).filter((t) => !currentTagSlugs.has(tagSlug(t)));
+
+  function handleCategoryChange(value: string) {
+    setCategory(value);
+    // keep the topic only if the new section has it too (engineering ↔ labs share topics)
+    if (!findSection(value)?.topics.some((t) => t.slug === topic)) setTopic("");
+  }
+
+  function addTag(tag: string) {
+    setTagsText(normalizeTags([...currentTags, tag]).join(", "));
   }
 
   async function uploadImage(file: File) {
@@ -99,7 +126,7 @@ export function PostEditor({
     setSaving(true);
     setError("");
 
-    const payload = { title, slug, excerpt, content, coverImage, published };
+    const payload = { title, slug, excerpt, content, coverImage, category, topic, tags: normalizeTags(tagsText), published };
     const url = mode === "create" ? "/api/admin/posts" : `/api/admin/posts/${post!.id}`;
     const method = mode === "create" ? "POST" : "PUT";
 
@@ -164,6 +191,70 @@ export function PostEditor({
           }}
           className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div>
+          <label htmlFor="category" className="text-xs text-muted">
+            Section
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(event) => handleCategoryChange(event.target.value)}
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+          >
+            {SECTIONS.map((s) => (
+              <option key={s.slug} value={s.slug}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="topic" className="text-xs text-muted">
+            Topic
+          </label>
+          <select
+            id="topic"
+            value={topic}
+            onChange={(event) => setTopic(event.target.value)}
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+          >
+            <option value="">— none —</option>
+            {section?.topics.map((t) => (
+              <option key={t.slug} value={t.slug}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="tags" className="text-xs text-muted">
+            Tags — comma separated, max {MAX_TAGS}
+          </label>
+          <input
+            id="tags"
+            value={tagsText}
+            onChange={(event) => setTagsText(event.target.value)}
+            placeholder="Scheduling, Security"
+            className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+          />
+          {suggestions.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {suggestions.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => addTag(tag)}
+                  className="rounded-full border border-border px-2 py-0.5 text-xs text-muted hover:border-accent hover:text-accent"
+                >
+                  + {tag}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div>
