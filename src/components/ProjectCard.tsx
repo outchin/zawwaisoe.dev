@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { statusLabel, type ProjectStatus } from "@/lib/project-status";
+import { ArchitectureDiagram } from "@/components/arch/ArchitectureDiagram";
+import { architectures } from "@/data/architectures";
 
 export type ProjectCardData = {
   slug: string;
@@ -106,6 +108,16 @@ export function ProjectCard({ project }: { project: ProjectCardData }) {
             </h4>
             <p className="mt-1">{project.approach}</p>
           </div>
+          {architectures[project.slug] && (
+            <div>
+              <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-foreground">
+                Architecture
+              </h4>
+              <div className="mt-2">
+                <ArchitectureDiagram architecture={architectures[project.slug]} />
+              </div>
+            </div>
+          )}
           <div>
             <h4 className="font-mono text-xs font-semibold uppercase tracking-wide text-foreground">
               03. Key features
