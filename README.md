@@ -152,6 +152,21 @@ migrations in production (Vercel runs this automatically on build if you
 add it to the build command, or you can run it manually after adding env
 vars to Vercel).
 
+## Labs (`/labs`)
+
+The labs are a separate app in their own repo
+([outchin/nestjs-recipe](https://github.com/outchin/nestjs-recipe)), deployed as their own
+Vercel project (its `vercel.json` runs `npm run build:labs`, files under `/labs/`).
+`next.config.ts` rewrites `/labs` and `/labs/*` to that project, so they appear at
+`zawwaisoe.dev/labs/...` while both repos deploy independently.
+
+- Set `LABS_ORIGIN` (the labs project URL, e.g. `https://<labs>.vercel.app`) in this
+  project's Vercel env vars. Unset → `/labs` is not forwarded.
+- Links to `/labs/*` are plain `<a>` tags, not `<Link>`: it is another app, so it needs a
+  full page load (see `node_modules/next/dist/docs/01-app/02-guides/multi-zones.md`).
+- The home page cards come from `src/data/labs.ts` (no measured numbers there: those live on
+  the lab pages, taken from the recorded runs).
+
 ## Deploying to Vercel
 
 1. Push this repo to GitHub.

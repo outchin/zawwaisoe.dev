@@ -5,7 +5,7 @@ export const site = {
   name: "Zaw Wai Soe",
   handle: "zawwaisoe",
   role: "Senior Backend Developer",
-  previouslyAt: "7r48 IT Solutions",
+  previouslyAt: "JOY Groups Int.",
   tagline: "I build things for the web.",
   bio: "I am a backend software developer with robust problem-solving skills and proven experience in creating and designing software in a real life environment.",
   location: "Chiang Mai, Thailand",
