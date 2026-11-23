@@ -55,3 +55,30 @@ model Project {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+// Achievements (competitions, programs) and certifications, shown on the
+// homepage under "Achievements & certifications". See src/lib/awards.ts.
+model Award {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  // "certification" | "achievement" — plain string, validated in app code.
+  kind          String
+  title         String
+  // The outcome, e.g. "3rd Prize", "Finalist · Top 8", "Certified".
+  result        String?
+  // Organiser or certifying body, e.g. "The Linux Foundation".
+  issuer        String?
+  // Free text so it can be "2024", "Mar 2023" or "University · 3rd year".
+  date          String?
+  description   String   @default("")
+  // Photos / certificate scans, shown in order; the first one is the card image.
+  images        String[] @default([])
+  credentialUrl String?
+  credentialId  String?
+  validUntil    String?
+  published     Boolean  @default(true)
+  // Manual sort order within its kind (lower = shown first).
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

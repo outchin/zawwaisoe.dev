@@ -25,6 +25,9 @@ export function AdminNav() {
           <Link href="/admin/projects" className="text-muted hover:text-foreground">
             Projects
           </Link>
+          <Link href="/admin/awards" className="text-muted hover:text-foreground">
+            Awards
+          </Link>
           <Link href="/blog" className="text-muted hover:text-foreground">
             View blog
           </Link>
