@@ -28,14 +28,46 @@ export const site = {
     { label: "LinkedIn", href: "https://linkedin.com/in/zawwaisoe" },
   ],
 
+  // Grouped tech stack, taken from the resume. Order within a group = most used first.
   skills: [
-    "TypeScript",
-    "React",
-    "Next.js",
-    "Node.js",
-    "Tailwind CSS",
-    "PostgreSQL",
-    "Git",
+    {
+      group: "Backend",
+      items: ["TypeScript", "Node.js", "NestJS", "Express.js", "Python", "Java", "PHP"],
+    },
+    {
+      group: "AWS",
+      items: [
+        "Lambda",
+        "API Gateway",
+        "EC2",
+        "S3",
+        "CloudFront",
+        "RDS / Aurora",
+        "ElastiCache",
+        "DynamoDB",
+        "CloudFormation",
+        "IAM",
+        "VPC",
+        "Route 53",
+        "CloudWatch",
+      ],
+    },
+    {
+      group: "Cloud & DevOps",
+      items: ["Kubernetes", "Amazon EKS", "Docker", "Terraform", "Vault", "Serverless Framework", "CI/CD pipelines", "Datadog"],
+    },
+    {
+      group: "Databases & caching",
+      items: ["MySQL", "PostgreSQL", "Redis", "DynamoDB", "MongoDB", "Firebase"],
+    },
+    {
+      group: "Frontend & mobile",
+      items: ["React", "Next.js", "Tailwind CSS", "JavaScript", "Flutter", "Android (Java)"],
+    },
+    {
+      group: "Tools",
+      items: ["Git / GitHub", "Bitbucket", "Bash", "Linux", "Claude Code", "GitHub Copilot"],
+    },
   ],
 
   // EmailJS config — see README.md for setup steps.
