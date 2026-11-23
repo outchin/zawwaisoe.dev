@@ -151,7 +151,11 @@ function Viewer({ award, onClose }: { award: AwardCardData; onClose: () => void 
           {(award.credentialId || award.validUntil || award.credentialUrl) && (
             <div className="mt-6 space-y-1 border-t border-border pt-4 font-sans text-xs text-muted">
               {award.credentialId && <p>Credential ID: {award.credentialId}</p>}
-              {award.validUntil && <p>Valid until {award.validUntil}</p>}
+              {award.validUntil && (
+                <p>
+                  {/expired/i.test(award.result ?? "") ? "Expired" : "Valid until"} {award.validUntil}
+                </p>
+              )}
               {award.credentialUrl && (
                 <a
                   href={award.credentialUrl}
