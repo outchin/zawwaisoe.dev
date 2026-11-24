@@ -43,7 +43,6 @@ export const site = {
         "S3",
         "CloudFront",
         "RDS / Aurora",
-        "ElastiCache",
         "DynamoDB",
         "CloudFormation",
         "IAM",
@@ -54,7 +53,7 @@ export const site = {
     },
     {
       group: "Cloud & DevOps",
-      items: ["Kubernetes", "Amazon EKS", "Docker", "Terraform", "Vault", "Serverless Framework", "CI/CD pipelines", "Datadog"],
+      items: ["Kubernetes", "Amazon EKS", "Docker", "Terraform", "Serverless Framework", "CI/CD pipelines"],
     },
     {
       group: "Databases & caching",
