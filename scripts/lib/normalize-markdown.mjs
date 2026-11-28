@@ -97,6 +97,67 @@ function separateBlocks(lines) {
   return out;
 }
 
+const EDGE = String.raw`(?:\s|<br\s*\/?>)+`;
+const LEADING = new RegExp(`^${EDGE}`);
+const TRAILING = new RegExp(`${EDGE}$`);
+
+/**
+ * Notion writes bold as `**Label: **value` and `**<br>Goal: **`: whitespace or <br> just inside
+ * the closing/opening `**`, which Markdown then shows as literal stars. Move it outside.
+ * Adjacent bold runs (`**a****b**`) are merged. Lines with an odd number of `**` are left alone.
+ */
+function fixBold(line) {
+  if (!line.includes("**")) return line;
+  // keep inline code out of the way while matching pairs
+  const codes = [];
+  let text = line.replace(/`[^`]*`/g, (c) => `\u0000${codes.push(c) - 1}\u0000`);
+  text = text.replace(/\*{4}/g, "");
+  if ((text.match(/\*\*/g) ?? []).length % 2) return line;
+
+  text = text.replace(/\*\*(.+?)\*\*/g, (_m, inner) => {
+    let body = inner;
+    const lead = body.match(LEADING)?.[0] ?? "";
+    body = body.slice(lead.length);
+    let trail = body.match(TRAILING)?.[0] ?? "";
+    body = body.slice(0, body.length - trail.length);
+    // a code span ending in a space (`Role: `) → trim it, the space goes after the bold
+    body = body.replace(/\u0000(\d+)\u0000$/, (m, i) => {
+      const trimmed = codes[i].replace(/\s+`$/, "`");
+      if (trimmed !== codes[i]) trail ||= " ";
+      codes[i] = trimmed;
+      return m;
+    });
+    if (!body) return lead + trail;
+    return `${lead}**${body}**${trail}`;
+  });
+  return text.replace(/\u0000(\d+)\u0000/g, (_m, i) => codes[i]);
+}
+
+/** Small per-line clean-ups of Notion leftovers. */
+function tidyLine(line) {
+  return (
+    line
+      // <span underline/color> does nothing on the site
+      .replace(/<\/?span\b[^>]*>/g, "")
+      // "## **Title**" → "## Title" (headings are bold already)
+      .replace(/^(#{1,6}\s+)\*\*((?:(?!\*\*).)+)\*\*\s*$/, "$1$2")
+      // callout icon repeated inside the label: "💡 **💡 Tip:**" → "💡 **Tip:**"
+      .replace(/(\p{Extended_Pictographic}\uFE0F?(?:\u200D\p{Extended_Pictographic}\uFE0F?)*)\s*\*\*\1\s*/gu, "$1 **")
+      // empty line breaks at the start/end of a line or quote
+      .replace(/^(\s*>\s*)(?:<br\s*\/?>\s*)+/, "$1")
+      .replace(/(?:\s*<br\s*\/?>)+\s*$/, "")
+      // "-  item" → "- item"
+      .replace(/^(\s*[-*+]) {2,}(?=\S)/, "$1 ")
+  );
+}
+
+/** The page title is the only h1: if a post uses "#" headings, move every heading down one level. */
+function demoteHeadings(parts) {
+  const hasH1 = parts.some((p) => !p.code && p.lines.some((l) => /^#\s/.test(l)));
+  if (!hasH1) return parts;
+  return parts.map((p) => (p.code ? p : { ...p, lines: p.lines.map((l) => l.replace(/^(#{1,5})(?=\s)/, "#$1")) }));
+}
+
 export function normalizeMarkdown(md) {
   const lines = unwrapColumns(md.replace(/\r\n/g, "\n")).split("\n");
   const parts = segments(lines).map((seg) => {
@@ -106,11 +167,11 @@ export function normalizeMarkdown(md) {
       .replace(/<table[^>]*>[\s\S]*?<\/table>/g, htmlTableToGfm)
       // a toggle with only a title opens to nothing: drop it
       .replace(/<details>\s*<summary>[^<]*<\/summary>\s*<\/details>/g, "");
-    return { code: false, lines: separateBlocks(prose.split("\n")) };
+    return { code: false, lines: separateBlocks(prose.split("\n")).map((l) => tidyLine(fixBold(l))) };
   });
 
   const out = [];
-  for (const part of parts) {
+  for (const part of demoteHeadings(parts)) {
     // fenced code gets a blank line on each side
     if (part.code && out.length && out.at(-1).trim()) out.push("");
     if (!part.code && out.length && part.lines.find((l) => l.trim()) && out.at(-1).trim()) out.push("");
