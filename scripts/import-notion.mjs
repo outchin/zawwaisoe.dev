@@ -25,6 +25,7 @@ function loadEnv() {
 }
 loadEnv();
 
+const { normalizeMarkdown } = await import("./lib/normalize-markdown.mjs");
 const { PrismaClient } = await import(
   path.join(ROOT, "node_modules/@prisma/client/default.js")
 );
@@ -187,6 +188,7 @@ async function run() {
       const raw = getNotionMarkdown(pageId);
       let cleaned = cleanMarkdown(raw);
       cleaned = await downloadImages(cleaned, slug, dryRun);
+      cleaned = normalizeMarkdown(cleaned);
 
       if (dryRun) {
         console.log(`OK (${cleaned.length} chars, dry run — no DB write)`);
