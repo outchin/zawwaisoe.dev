@@ -6,6 +6,13 @@ import type { NextConfig } from "next";
 const labsOrigin = process.env.LABS_ORIGIN?.replace(/\/$/, "");
 
 const nextConfig: NextConfig = {
+  // Posts whose slug had a typo; old links keep working.
+  async redirects() {
+    return [
+      { source: "/blog/kuber-api-server", destination: "/blog/kube-api-server", permanent: true },
+      { source: "/blog/limitrange-resource-quoata", destination: "/blog/limitrange-resource-quota", permanent: true },
+    ];
+  },
   async rewrites() {
     if (!labsOrigin) return [];
     return [

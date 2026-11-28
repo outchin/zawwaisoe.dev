@@ -31,7 +31,7 @@ const prisma = new PrismaClient();
 
 function randomDateIn2026(rng) {
   const start = Date.UTC(2026, 0, 1); // Jan 1 2026
-  const end = Date.UTC(2026, 11, 31, 23, 59, 59); // Dec 31 2026
+  const end = Math.min(Date.UTC(2026, 11, 31, 23, 59, 59), Date.now()); // never in the future
   const t = start + rng() * (end - start);
   return new Date(t);
 }

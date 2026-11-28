@@ -18,6 +18,7 @@ type Params = { params: Promise<{ slug: string }> };
 async function getPost(slug: string) {
   const post = await prisma.post.findUnique({ where: { slug } });
   if (!post || !post.published) return null;
+  if (post.publishedAt && post.publishedAt > new Date()) return null; // scheduled, not out yet
   return post;
 }
 

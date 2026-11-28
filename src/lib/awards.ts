@@ -1,9 +1,9 @@
 import { slugify } from "@/lib/slug";
 
-/** Two kinds, shown as two groups on the homepage (certifications first). */
+/** Two kinds, shown as two groups on the homepage (certifications first, then student-years awards). */
 export const AWARD_KINDS = [
   { slug: "certification", label: "Certifications", single: "Certification" },
-  { slug: "achievement", label: "Achievements", single: "Achievement" },
+  { slug: "achievement", label: "University awards (2017–2020)", single: "University award" },
 ] as const;
 
 export type AwardKind = (typeof AWARD_KINDS)[number]["slug"];

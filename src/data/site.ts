@@ -7,7 +7,7 @@ export const site = {
   role: "Senior Backend Developer",
   previouslyAt: "JOY Groups Int.",
   tagline: "I build things for the web.",
-  bio: "I am a backend software developer with robust problem-solving skills and proven experience in creating and designing software in a real life environment.",
+  bio: "Backend developer with 6+ years of experience building and running production APIs and services with Node.js, NestJS and TypeScript on AWS. Open to remote roles, and happy to relocate to Japan or Vietnam.",
   location: "Chiang Mai, Thailand",
   availability: "Open for new opportunities",
 

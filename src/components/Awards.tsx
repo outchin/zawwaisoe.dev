@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { AWARD_KINDS } from "@/lib/awards";
 import { AwardCards } from "@/components/AwardCards";
 
+const isExpired = (result: string | null) => /expired/i.test(result ?? "");
+
 export async function Awards() {
   const awards = await prisma.award.findMany({
     where: { published: true },
@@ -32,7 +34,10 @@ export async function Awards() {
       </p>
 
       {AWARD_KINDS.map((kind) => {
-        const items = awards.filter((a) => a.kind === kind.slug);
+        // current credentials first, expired ones after them (each group keeps its manual order)
+        const items = awards
+          .filter((a) => a.kind === kind.slug)
+          .sort((a, b) => Number(isExpired(a.result)) - Number(isExpired(b.result)));
         if (items.length === 0) return null;
         return (
           <div key={kind.slug} className="mt-8">

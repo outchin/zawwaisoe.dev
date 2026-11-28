@@ -44,7 +44,8 @@ export default async function BlogIndexPage({ searchParams }: { searchParams: Se
   };
 
   const posts = await prisma.post.findMany({
-    where: { published: true },
+    // a future publishedAt means scheduled: keep it off the list until that date
+    where: { published: true, publishedAt: { lte: new Date() } },
     orderBy: { publishedAt: "desc" },
     select: {
       slug: true,
