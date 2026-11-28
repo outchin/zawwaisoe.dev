@@ -77,6 +77,9 @@ function kind(line, prev) {
   return "block"; // paragraph, heading, rule, image, html line: each is its own block
 }
 
+// Notion indents some blocks with a tab; outside a list that turns them into a code block.
+const dedent = (line, k) => (k === "block" ? line.replace(/^[\t ]+/, "") : line);
+
 /** Put a blank line between blocks; keep list items, table rows and quote lines together. */
 function separateBlocks(lines) {
   const out = [];
@@ -88,7 +91,7 @@ function separateBlocks(lines) {
       // consecutive quote lines are separate lines in Notion, not one wrapped paragraph
       else if (k === "quote" && line.replace(/^\s*>\s?/, "").trim() && !LIST.test(line.replace(/^\s*>\s?/, "")) && out.at(-1).replace(/^\s*>\s?/, "").trim()) out.push(">");
     }
-    out.push(line);
+    out.push(dedent(line, k));
     prev = k;
   }
   return out;
@@ -98,7 +101,11 @@ export function normalizeMarkdown(md) {
   const lines = unwrapColumns(md.replace(/\r\n/g, "\n")).split("\n");
   const parts = segments(lines).map((seg) => {
     if (seg.code) return { code: true, lines: fixFence(seg.lines) };
-    const prose = seg.lines.join("\n").replace(/<table[^>]*>[\s\S]*?<\/table>/g, htmlTableToGfm);
+    const prose = seg.lines
+      .join("\n")
+      .replace(/<table[^>]*>[\s\S]*?<\/table>/g, htmlTableToGfm)
+      // a toggle with only a title opens to nothing: drop it
+      .replace(/<details>\s*<summary>[^<]*<\/summary>\s*<\/details>/g, "");
     return { code: false, lines: separateBlocks(prose.split("\n")) };
   });
 

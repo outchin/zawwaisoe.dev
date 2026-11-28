@@ -1,6 +1,6 @@
 // Re-format every post's Markdown with scripts/lib/normalize-markdown.mjs
 // (blank lines between blocks, HTML tables → Markdown tables, columns unwrapped,
-// diagram code blocks tagged as text). Safe to run again: unchanged posts are skipped.
+// diagram code blocks tagged as text, empty toggles removed). Safe to run again: unchanged posts are skipped.
 //   node --env-file=.env scripts/format-posts.mjs [--dry] [--only slug1,slug2]
 //   node --env-file=.env.production.local scripts/format-posts.mjs [--dry]
 import { PrismaClient } from "@prisma/client";
@@ -23,11 +23,7 @@ for (const { slug, content } of posts) {
   const next = normalizeMarkdown(content);
   if (next === content) continue;
   changed++;
-  const emptyDetails = (next.match(/<summary>[^<]*<\/summary>\s*<\/details>/g) ?? []).length;
-  console.log(
-    `format ${slug}: ${content.split("\n").length} → ${next.split("\n").length} lines` +
-      (emptyDetails ? `  (note: ${emptyDetails} empty <details> block(s) — content missing in source)` : ""),
-  );
+  console.log(`format ${slug}: ${content.split("\n").length} → ${next.split("\n").length} lines`);
   if (!dry) await prisma.post.update({ where: { slug }, data: { content: next } });
 }
 console.log(`${changed} of ${posts.length} post(s) ${dry ? "would change" : "updated"}.`);

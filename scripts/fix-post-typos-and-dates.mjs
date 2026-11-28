@@ -2,6 +2,7 @@
 //  - two posts had a publishedAt in the future (from randomize-dates.mjs) → move them into the past
 //  - typo in two titles/slugs: "Quoata" → "Quota", "Kuber API Server" → "Kube API Server"
 //    (next.config.ts redirects the old slugs)
+//  - TLS post: drop the empty "Step-by-Step Process" section
 // Safe to run twice. Uses DATABASE_URL from the environment:
 //   node --env-file=.env scripts/fix-post-typos-and-dates.mjs [--dry]
 //   node --env-file=.env.production.local scripts/fix-post-typos-and-dates.mjs [--dry]
@@ -40,6 +41,21 @@ for (const { from, to, title: [re, fix] } of renames) {
   };
   console.log(`fix  ${from} → ${to}: "${post.title}" → "${data.title}"`);
   if (!dry) await prisma.post.update({ where: { slug: from }, data });
+}
+
+// TLS post: its "Step 1–4" toggles were empty (removed by format-posts.mjs), so the
+// "Step-by-Step Process" line introducing them is left dangling at the end.
+{
+  const slug = "tls-in-kubernetes-certificate-creation";
+  const post = await prisma.post.findUnique({ where: { slug }, select: { content: true } });
+  const content = post?.content
+    .replace(/\n*<details>\s*<summary>[^<]*<\/summary>\s*<\/details>/g, "")
+    .replace(/\n+📝 Step-by-Step Process\s*$/, "\n");
+  if (!post || content === post.content) console.log(`ok   ${slug}: nothing to remove`);
+  else {
+    console.log(`fix  ${slug}: remove empty "Step-by-Step Process" section`);
+    if (!dry) await prisma.post.update({ where: { slug }, data: { content } });
+  }
 }
 
 await prisma.$disconnect();

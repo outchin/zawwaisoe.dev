@@ -24,7 +24,7 @@ export const site = {
   email: "zawwaisoe.job@gmail.com",
 
   social: [
-    { label: "GitHub", href: "https://github.com/zawwaisoe" },
+    { label: "GitHub", href: "https://github.com/outchin" },
     { label: "LinkedIn", href: "https://linkedin.com/in/zawwaisoe" },
   ],
 
